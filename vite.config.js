@@ -18,6 +18,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
+        bridge: resolve(__dirname, 'bridge.html'),
         collection: resolve(__dirname, 'collection.html'),
         404: resolve(__dirname, '404.html'),
       },
