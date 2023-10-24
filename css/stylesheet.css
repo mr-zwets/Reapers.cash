@@ -38,6 +38,10 @@
 /*  1. Basic Style 
 /* =================================== */
 
+@font-face {
+  font-family: 'OctoberCrow';
+  src: URL('../OctoberCrow.ttf') format('truetype');
+}
 
 .fa-chevron-double-right:before {
   content: "\f101";}
