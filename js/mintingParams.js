@@ -7,7 +7,7 @@ const projectId = "2aca272d18deb10ff748260da5f78bfd";
 const urlApiServer = "https://api.ninjas.cash";
 
 // Contract Params mint
-const tokenId = "77a95410a07c2392c340384aef323aea902ebfa698a35815c4ef100062c6d8ac";
+const tokenId = "YOUR_GENESIS_UNSPENT_TX";
 const collectionSize = 5_000;
 const numberOfThreads = 25;
 const mintPriceSats = 5_000_000;

@@ -4,7 +4,11 @@ import { ElectrumCluster, ElectrumTransport } from 'electrum-cash';
 import { ElectrumNetworkProvider } from "cashscript";
 import { projectId, urlApiServer, tokenId, network, wcMetadata } from "/js/mintingParams.js";
 import { bigIntToVmNumber, binToHex, hexToBin, vmNumberToBigInt } from '@bitauth/libauth';
-import { listMarkings, listWeapons, listBackgrounds, listEyes, listColors, listSpecials } from "/js/attributes.js"
+import { listOutfits, listHeads, listBackgrounds, listEyes, listHands, listSpecials } from "/js/attributes.js"
+import bcmr from "../bitcoin-cash-metadata-registry.json"
+
+// Find nftMetadata in BCMR file
+const nftMetadata = bcmr.identities[tokenId]["2023-10-26T07:39:35.670Z"].token.nfts.parse.types;
 
 // Read URL Params
 const urlParams = new URLSearchParams(window.location.search);
@@ -13,10 +17,10 @@ const urlParamFullCollection = urlParams.get("fullcollection");
 const displayFullCollection = urlParamFullCollection == "";
 
 // Define lists for ninja attributes
-const checkboxLists = [listMarkings, listWeapons, listBackgrounds, listEyes, listColors, listColors, listSpecials];
-const itemsPerAttributeList = [9, 22, 14, 16, 22, 22, 1];
-const attributeNames = ["Markings", "Weapons", "Backgrounds", "Eyes", "Colors1", "Colors2", "Specials"];
-const attributeKeys = ["Marking", "Weapon", "Background", "Eyes", "Primary Color", "Secondary Color", "Specials"];
+const checkboxLists = [listOutfits, listHeads, listBackgrounds, listEyes, listHands, listSpecials];
+const itemsPerAttributeList = [18, 2, 23, 28, 23, 1];
+const attributeNames = ["Outfits", "Heads", "Backgrounds", "Eyes", "Hands", "Specials"];
+const attributeKeys = ["Outfit", "Head", "Background", "Eyes", "Hands", "Special"];
 
 // Create a custom 1-of-1 electrum cluster for bch-mainnet
 const electrumCluster = new ElectrumCluster('Electrum cluster example', '1.4.1', 1, 1);
@@ -40,6 +44,7 @@ checkboxLists.forEach((checkboxList, index) => {
     const itemCount = checkboxTemplate.getElementById("itemCount");
     const attributeKey = attributeKeys[index];
     const attributeString = (attributeKey + listItem).replace(/\s/g, '_');
+    console.log(attributeString)
     itemCount.setAttribute("id", "itemCount" + attributeString);
     // Set checkbox functionality
     const checkbox = checkboxTemplate.getElementById("idInput");
@@ -53,11 +58,8 @@ checkboxLists.forEach((checkboxList, index) => {
   Placeholder.replaceWith(divCheckboxList);
 })
 
-// Fetch full BCMR file from server
-const fetchBcmrPromise = await fetch(urlApiServer + "/.well-known/bitcoin-cash-metadata-registry.json");
-const fetchBcmrResult = await fetchBcmrPromise.json();
-const nftMetadata = fetchBcmrResult.identities[tokenId]["2023-10-07T14:29:05.694Z"].token.nfts.parse.types;
-
+let unfilteredListNinjas = [];
+/*
 // 1. Setup Client with relay server
 const signClient = await SignClient.init({
   projectId,
@@ -186,6 +188,12 @@ async function getNinjasOnAddr(address){
   })
   return listCashninjas
 }
+*/
+
+let allReaperNumbers = [];
+for (let i = 1; i <= 10_000; i++) {allReaperNumbers.push(i);}
+updateCollection(allReaperNumbers);
+displayNinjas();
 
 async function displayNinjas(offset = 0){
   const filteredNinjaList = filterNinjaList(unfilteredListNinjas);
@@ -202,14 +210,14 @@ async function displayNinjas(offset = 0){
   ninjaList.classList.add("g-6", "row");
   const template = document.getElementById("ninja-template");
   // Render list of cashninjas
-  slicedArray.forEach(ninjaNumber => {
+  slicedArray.forEach(nftNumber => {
     const ninjaTemplate = document.importNode(template.content, true);
-    const ninjaImage = ninjaTemplate.getElementById("ninjaImage");
-    ninjaImage.src = urlApiServer + '/icons/' + ninjaNumber;
     const ninjaName = ninjaTemplate.getElementById("ninjaName");
-    const ninjaCommitment = binToHex(bigIntToVmNumber(BigInt(ninjaNumber -1)));
+    const ninjaCommitment = binToHex(bigIntToVmNumber(BigInt(nftNumber -1)));
     const ninjaData = nftMetadata[ninjaCommitment];
-    ninjaName.textContent = ninjaData?.name ?? `Ninja #${ninjaNumber}`;
+    ninjaName.textContent = ninjaData?.name ?? `Ninja #${nftNumber}`;
+    const ninjaImage = ninjaTemplate.getElementById("ninjaImage");
+    ninjaImage.src = "https://ipfs.io/ipfs/QmVm2v4NXMTXJi1RwnYUbp2ixPErLqCLKR34CU7fxE6QBD/" + nftNumber + ".png";
     ninjaList.appendChild(ninjaTemplate);
   });
   Placeholder.replaceWith(ninjaList);
@@ -245,19 +253,16 @@ function updateCollection(newCollection) {
     const ninjaData = nftMetadata[ninjaCommitment];
     const ninjaAttributes = ninjaData?.extensions.attributes;
 
-    if(ninjaData){
-      let attributeClasses = "attributeClasses";
+    if(ninjaAttributes.Special == "None"){
       Object.keys(ninjaAttributes).forEach((attributeKey, index) => {
         const attibuteObj = attributeObjs[attributeKey];
         const attributeValue = ninjaAttributes[attributeKey];
-        let attributeClass = " " + (attributeKey + attributeValue).replace(/\s/g, '_');
-        if(attributeKey == "Specials") attributeClass = " Specials";
-        attributeClasses += attributeClass;
         if(attibuteObj[attributeValue]) attibuteObj[attributeValue] += 1;
         else attibuteObj[attributeValue] = 1;
       })
-    }
+    } else {attributeObjs["Special"][ninjaAttributes["Special"]] = 1}
   });
+  delete  attributeObjs["Special"]["None"]
 
   // Display total counts
   attributeNames.forEach((attributeName,index) => {
@@ -265,8 +270,8 @@ function updateCollection(newCollection) {
     const totalCountDiv = document.getElementById(idTotalCount);
     const attibuteObj = attributeObjs[attributeKeys[index]];
     const countUniqueItems = Object.keys(attibuteObj).length;
-    const countDisplayString = (idTotalCount != "numberSpecials")? countUniqueItems + "/" + itemsPerAttributeList[index] : countUniqueItems;
-    totalCountDiv.textContent = countDisplayString;
+    // const countDisplayString = (idTotalCount != "numberSpecials")? countUniqueItems + "/" + itemsPerAttributeList[index] : countUniqueItems;
+    totalCountDiv.textContent = countUniqueItems;
   })
 
   // display Indvidual Counts
@@ -400,7 +405,8 @@ function filterNinjaList(listCashninjas){
           // Only run these check for ninja numbers with metadata available
           if(ninjaAttributes){
             if(ninjaAttributes[categoryToFilterOn] == attributeToFilterOn) categoryList.push(ninjaNumber);
-            if(categoryToFilterOn == "Specials" && ninjaAttributes[categoryToFilterOn]) categoryList.push(ninjaNumber)
+            console.log(categoryToFilterOn)
+            if(categoryToFilterOn == "Special" && ninjaAttributes["Special"] != "None") categoryList.push(ninjaNumber)
           }
         })
       }
