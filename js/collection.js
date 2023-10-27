@@ -2,7 +2,7 @@ import SignClient from '@walletconnect/sign-client';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { ElectrumCluster, ElectrumTransport } from 'electrum-cash';
 import { ElectrumNetworkProvider } from "cashscript";
-import { projectId, urlApiServer, tokenId, network, wcMetadata } from "/js/mintingParams.js";
+import { projectId, ipfsLocationIcons, tokenId, network, wcMetadata } from "/js/mintingParams.js";
 import { bigIntToVmNumber, binToHex, hexToBin, vmNumberToBigInt } from '@bitauth/libauth';
 import { listOutfits, listHeads, listBackgrounds, listEyes, listHands, listSpecials } from "/js/attributes.js"
 import bcmr from "../bitcoin-cash-metadata-registry.json"
@@ -217,7 +217,7 @@ async function displayNinjas(offset = 0){
     const ninjaData = nftMetadata[ninjaCommitment];
     ninjaName.textContent = ninjaData?.name ?? `Ninja #${nftNumber}`;
     const ninjaImage = ninjaTemplate.getElementById("ninjaImage");
-    ninjaImage.src = "https://ipfs.io/ipfs/QmVm2v4NXMTXJi1RwnYUbp2ixPErLqCLKR34CU7fxE6QBD/" + nftNumber + ".png";
+    ninjaImage.src = `https://ipfs.greyh.at/ipfs/${ipfsLocationIcons}/${nftNumber}.png`
     ninjaList.appendChild(ninjaTemplate);
   });
   Placeholder.replaceWith(ninjaList);
@@ -252,7 +252,7 @@ function updateCollection(newCollection) {
     const ninjaCommitment = binToHex(bigIntToVmNumber(BigInt(ninjaNumber -1)));
     const ninjaData = nftMetadata[ninjaCommitment];
     const ninjaAttributes = ninjaData?.extensions.attributes;
-
+    
     if(ninjaAttributes.Special == "None"){
       Object.keys(ninjaAttributes).forEach((attributeKey, index) => {
         const attibuteObj = attributeObjs[attributeKey];
@@ -262,7 +262,7 @@ function updateCollection(newCollection) {
       })
     } else {attributeObjs["Special"][ninjaAttributes["Special"]] = 1}
   });
-  delete  attributeObjs["Special"]["None"]
+  delete attributeObjs["Special"]["None"]
 
   // Display total counts
   attributeNames.forEach((attributeName,index) => {
@@ -405,7 +405,6 @@ function filterNinjaList(listCashninjas){
           // Only run these check for ninja numbers with metadata available
           if(ninjaAttributes){
             if(ninjaAttributes[categoryToFilterOn] == attributeToFilterOn) categoryList.push(ninjaNumber);
-            console.log(categoryToFilterOn)
             if(categoryToFilterOn == "Special" && ninjaAttributes["Special"] != "None") categoryList.push(ninjaNumber)
           }
         })

@@ -3,8 +3,8 @@
 // Wallet Connect projectId
 const projectId = "2aca272d18deb10ff748260da5f78bfd";
 
-// Url of the API server
-const urlApiServer = "https://api.ninjas.cash";
+// Ipfs location icons
+const ipfsLocationIcons = "QmVm2v4NXMTXJi1RwnYUbp2ixPErLqCLKR34CU7fxE6QBD"
 
 // Contract Params mint
 const tokenId = "YOUR_GENESIS_UNSPENT_TX";
@@ -22,4 +22,4 @@ const wcMetadata = {
   icons: ['https://ninjas.cash/images/logo.png']
 };
 
-export { projectId, urlApiServer, tokenId, collectionSize, mintPriceSats, payoutAddress, numberOfThreads, network, wcMetadata };
+export { projectId, ipfsLocationIcons, tokenId, collectionSize, mintPriceSats, payoutAddress, numberOfThreads, network, wcMetadata };
