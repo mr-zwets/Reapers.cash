@@ -10,15 +10,15 @@ const urlParams = new URLSearchParams(window.location.search);
 const nftNumber = urlParams.get("nr");
 
 const reaperName = document.getElementById("reaperName");
-const ninjaCommitment = binToHex(bigIntToVmNumber(BigInt(nftNumber -1)));
-const reaperData = nftMetadata[ninjaCommitment];
+const nftCommitment = binToHex(bigIntToVmNumber(BigInt(nftNumber -1)));
+const reaperData = nftMetadata[nftCommitment];
 reaperName.textContent = reaperData?.name;
-const ninjaImage = document.getElementById("reaperImage");
-ninjaImage.src = `https://ipfs.greyh.at/ipfs/${ipfsLocationImage}/${nftNumber}.png`;
-const reaperAttributes = reaperData.extensions.attributes
-document.getElementById("Background").textContent = reaperAttributes.Background;
-document.getElementById("Outfit").textContent = reaperAttributes.Outfit;
-document.getElementById("Head").textContent = reaperAttributes.Head;
-document.getElementById("Eyes").textContent = reaperAttributes.Eyes;
-document.getElementById("Hands").textContent = reaperAttributes.Hands;
-document.getElementById("Special").textContent = reaperAttributes.Special;
+const reaperImage = document.getElementById("reaperImage");
+const urlReaperImage = `https://ipfs.greyh.at/ipfs/${ipfsLocationImage}/${nftNumber}.png`;
+reaperImage.src = urlReaperImage;
+const reaperAttributes = reaperData.extensions.attributes;
+// Set the attributes divs to the Reapers' attributes
+["Background","Outfit","Head","Eyes","Hands","Special"].forEach(attribute => {
+  document.getElementById(attribute).textContent = reaperAttributes[attribute];
+})
+document.getElementById("ipfsLink").href = urlReaperImage;
