@@ -4,7 +4,8 @@
 const projectId = "2aca272d18deb10ff748260da5f78bfd";
 
 // Ipfs location icons
-const ipfsLocationIcons = "QmVm2v4NXMTXJi1RwnYUbp2ixPErLqCLKR34CU7fxE6QBD"
+const ipfsLocationIcons = "bafybeidoidntyzjzifqwdk3um4e2j2jk2ppslhq4mypapunbmbthya4eaq"
+const ipfsLocationImage ="bafybeif5vhnowtqre7c3z5tgezccfgvhelqlgp54np6jsersuv7sylqzky"
 
 // Contract Params mint
 const tokenId = "YOUR_GENESIS_UNSPENT_TX";
@@ -22,4 +23,4 @@ const wcMetadata = {
   icons: ['https://ninjas.cash/images/logo.png']
 };
 
-export { projectId, ipfsLocationIcons, tokenId, collectionSize, mintPriceSats, payoutAddress, numberOfThreads, network, wcMetadata };
+export { projectId, ipfsLocationIcons, ipfsLocationImage, tokenId, collectionSize, mintPriceSats, payoutAddress, numberOfThreads, network, wcMetadata };

@@ -44,7 +44,6 @@ checkboxLists.forEach((checkboxList, index) => {
     const itemCount = checkboxTemplate.getElementById("itemCount");
     const attributeKey = attributeKeys[index];
     const attributeString = (attributeKey + listItem).replace(/\s/g, '_');
-    console.log(attributeString)
     itemCount.setAttribute("id", "itemCount" + attributeString);
     // Set checkbox functionality
     const checkbox = checkboxTemplate.getElementById("idInput");
@@ -217,7 +216,9 @@ async function displayNinjas(offset = 0){
     const ninjaData = nftMetadata[ninjaCommitment];
     ninjaName.textContent = ninjaData?.name ?? `Ninja #${nftNumber}`;
     const ninjaImage = ninjaTemplate.getElementById("ninjaImage");
-    ninjaImage.src = `https://ipfs.greyh.at/ipfs/${ipfsLocationIcons}/${nftNumber}.png`
+    ninjaImage.src = `https://ipfs.greyh.at/ipfs/${ipfsLocationIcons}/${nftNumber}.png`;
+    const reaperLink = ninjaTemplate.getElementById("reaperLink");
+    reaperLink.href = './reapers.html?nr=' + nftNumber;
     ninjaList.appendChild(ninjaTemplate);
   });
   Placeholder.replaceWith(ninjaList);

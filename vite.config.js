@@ -19,6 +19,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         collection: resolve(__dirname, 'collection.html'),
+        reapers: resolve(__dirname, 'reapers.html'),
         404: resolve(__dirname, '404.html'),
       },
     },
