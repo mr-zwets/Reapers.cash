@@ -1203,7 +1203,9 @@ html[dir="rtl"] .page-header .breadcrumb>li+li:before {
 }
 
 @media (max-width: 991.98px) {
-
+  h1 {
+    margin: 0;
+  }
   .scene.alternate .layer-1,
   .scene.alternate .layer-5 {
     display: none !important;
