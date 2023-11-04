@@ -23,8 +23,8 @@ const attributeNames = ["Outfits", "Heads", "Backgrounds", "Eyes", "Hands", "Spe
 const attributeKeys = ["Outfit", "Head", "Background", "Eyes", "Hands", "Special"];
 
 // Create a custom 1-of-1 electrum cluster for bch-mainnet
-const electrumCluster = new ElectrumCluster('Electrum cluster example', '1.4.1', 1, 1);
-electrumCluster.addServer('electrum.imaginary.cash', ElectrumTransport.WSS.Port, ElectrumTransport.WSS.Scheme);
+const electrumCluster = new ElectrumCluster('Reapers', '1.5.1', 1, 1);
+electrumCluster.addServer('fulcrum.greyh.at', ElectrumTransport.WSS.Port, ElectrumTransport.WSS.Scheme);
 const electrum = network == "mainnet" ? electrumCluster : undefined;
 // Initialise cashscript ElectrumNetworkProvider
 const electrumServer = new ElectrumNetworkProvider(network, electrum);
