@@ -44,6 +44,7 @@ window.validateAddress = (event) => {
 // For this, you need the account signer...
 const signer = provider.getSigner()
 const userAddress = await signer.getAddress()
+let listNftNumbers
 getReapersAddress()
 
 const reaperNumbers = document.getElementById("reaperNumbers")
@@ -56,7 +57,7 @@ async function getReapersAddress(){
     console.log(infoAddress);
 
     const listNftItems = infoAddress.filter(item => !item.timeBridged)
-    const listNftNumbers = listNftItems.map(item => item.nftnumber)
+    listNftNumbers = listNftItems.map(item => item.nftnumber)
     if(listNftNumbers.length){
       let listReapers = "";
       listNftNumbers.forEach((number,index) => {
@@ -72,21 +73,27 @@ async function getReapersAddress(){
 }
 
 async function bridgeReapers(){
-  const signature = await signer.signMessage(userAddress);
-  console.log(signature)
-  sendBridgingRequest()
-
-  async function sendBridgingRequest(){
-    const rawResponse = await fetch(backendUrl+'/signbridging', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({signature, sbchOriginAddress:userAddress, destinationAddress:""})
-    });
-    const content = await rawResponse.json();
-
-    console.log(content);
+  const userCashTokensAddr = document.getElementById("addressInput").value
+  if(!validTokenAddress){
+    alert("provide a valid CashTokens address")
+    return
   }
+  if(!listNftNumbers.length){
+    alert("didn't find any burned reapers")
+    return
+  }
+
+  const signature = await signer.signMessage(userAddress);
+  const rawResponse = await fetch(backendUrl+'/signbridging', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({signature, sbchOriginAddress:userAddress, destinationAddress:userCashTokensAddr})
+  });
+  const content = await rawResponse.json();
+
+  console.log(content);
 }
+window.bridgeReapers = bridgeReapers
