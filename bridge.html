@@ -93,12 +93,31 @@
                 style="max-width: 500px; width: 90%;">
             </div>
 
-            <div class="col-lg-6 text-center text-lg-start">
+            <div class="col-lg-6 text-center text-lg-start text-white">
               <h1 class="hideMobile text-light text-5 mb-4">Reapers Bridge</h1>
               <h2 class="text-10 text-white fw-600 mb-4">Bridge to CashTokens <span
                 class="bg-primary rounded-4 px-3">Live</span></h2></h2>
-              <p class="text-white">
-                Connect your MetaMask wallet holding your Reapers to bridge them over from SBCH to Bitcoin Cash as CashTokens! <br><br>
+              <p id="connectMetamask">
+                Connect your MetaMask wallet holding your Reapers to bridge them over from SBCH to Bitcoin Cash as CashTokens! <br>
+              </p>
+              status: <span id="connectionStatus" >connecting to MetaMask...</span> <br><br>
+
+              <div id="bridgeInfo" style="display: none;">
+                First, send your reapers to the SBCH burn address
+                <code>0x0000000000000000000000000000000000000000</code>
+                <br><br>
+
+                Then input a CashTokens receiving address below: <br>
+                <input id="addressInput" oninput="validateAddress(event)" type="text" placeholder="CashTokens address" style="width: 350px; margin-top: 10px;" >
+                <br>
+                <span id="addressError" style="color: red; font-weight: 500; margin-top: 10px;"></span>
+                <br>
+
+                Your reapers ready to bridge: none <br>
+                <a class="btn btn-secondary rounded-4 mt-2" href="./bridge.html">Bridge Reapers</a>
+                <br><br>
+              </div>
+              <p>
                 <b>Note:</b> bridging to CashTokens is only one way, your Reapers cannot be returned to SBCH.
               </p>
             </div>
@@ -115,6 +134,7 @@
         class="fa fa-chevron-up"></i></a>
 
     <!-- JavaScript -->
+    <script src="js/bridge.js" type="module"></script>
     <script src="/vendor/jquery/jquery.min.js"></script>
     <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- Owl Carousel -->
