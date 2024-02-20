@@ -46,6 +46,7 @@ const signer = provider.getSigner()
 const userAddress = await signer.getAddress()
 let listNftNumbers
 getReapersAddress()
+setInterval(getReapersAddress, 5000)
 
 const reaperNumbers = document.getElementById("reaperNumbers")
 async function getReapersAddress(){
@@ -56,7 +57,7 @@ async function getReapersAddress(){
     const infoAddress = await rawResponse.json();
     console.log(infoAddress);
 
-    const listNftItems = infoAddress.filter(item => !item.timeBridged)
+    const listNftItems = infoAddress.filter(item => !item.timebridged)
     listNftNumbers = listNftItems.map(item => item.nftnumber)
     if(listNftNumbers.length){
       let listReapers = "";
@@ -66,6 +67,8 @@ async function getReapersAddress(){
       })
       reaperNumbers.textContent = listReapers
       document.getElementById("bridgeButton").classList = "btn btn-primary rounded-4 mt-2"
+    } else {
+      reaperNumbers.textContent = "none"
     }
   } catch (error){
     reaperNumbers.textContent = "failed to fetch..."
@@ -92,8 +95,12 @@ async function bridgeReapers(){
     },
     body: JSON.stringify({signature, sbchOriginAddress:userAddress, destinationAddress:userCashTokensAddr})
   });
-  const content = await rawResponse.json();
-
-  console.log(content);
+  const { txid } = await rawResponse.json();
+  alert("bridging transaction succesfull, txid: " + txid);
+  console.log("bridging transaction succesfull, txid: " + txid)
+  // reset changed state
+  document.getElementById("addressInput").value = ""
+  document.getElementById("bridgeButton").classList = "btn btn-secondary rounded-4 mt-2"
+  getReapersAddress()
 }
 window.bridgeReapers = bridgeReapers
