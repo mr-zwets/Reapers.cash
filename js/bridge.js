@@ -36,21 +36,42 @@ window.validateAddress = (event) => {
   } catch (error) {
     console.log(error);
   }
-  if (!validTokenAddress) {
-    error.textContent = "Not a valid CashTokens address.";
-  } else {
-    error.textContent = "";
-  }
+  error.textContent = validTokenAddress || !inputAddress ? "" : "Not a valid CashTokens address.";
 };
 
 // The MetaMask plugin also allows signing transactions to
 // send ether and pay to change state within the blockchain.
 // For this, you need the account signer...
 const signer = provider.getSigner()
+const userAddress = await signer.getAddress()
+getReapersAddress()
+
+const reaperNumbers = document.getElementById("reaperNumbers")
+async function getReapersAddress(){
+  try{
+    const rawResponse = await fetch(backendUrl+'/address/'+userAddress)
+    console.log(rawResponse)
+    if(!rawResponse.ok) reaperNumbers.textContent = "failed to fetch..."
+    const infoAddress = await rawResponse.json();
+    console.log(infoAddress);
+
+    const listNftItems = infoAddress.filter(item => !item.timeBridged)
+    const listNftNumbers = listNftItems.map(item => item.nftnumber)
+    if(listNftNumbers.length){
+      let listReapers = "";
+      listNftNumbers.forEach((number,index) => {
+        listReapers += `#${number}`;
+        if(index < listNftNumbers.length-1) listReapers += ", "
+      })
+      reaperNumbers.textContent = listReapers
+      document.getElementById("bridgeButton").classList = "btn btn-primary rounded-4 mt-2"
+    }
+  } catch (error){
+    reaperNumbers.textContent = "failed to fetch..."
+  }
+}
 
 async function bridgeReapers(){
-  const userAddress = await signer.getAddress()
-  console.log(userAddress)
   const signature = await signer.signMessage(userAddress);
   console.log(signature)
   sendBridgingRequest()
