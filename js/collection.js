@@ -1,7 +1,7 @@
 import SignClient from '@walletconnect/sign-client';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { ElectrumCluster, ElectrumTransport } from 'electrum-cash';
-import { ElectrumNetworkProvider } from "cashscript";
+// import { ElectrumNetworkProvider } from "cashscript";
 import { projectId, ipfsLocationIcons, tokenId, network, wcMetadata } from "/js/mintingParams.js";
 import { bigIntToVmNumber, binToHex, hexToBin, vmNumberToBigInt } from '@bitauth/libauth';
 import { listOutfits, listHeads, listBackgrounds, listEyes, listHands, listSpecials } from "/js/attributes.js"
@@ -23,11 +23,12 @@ const attributeNames = ["Outfits", "Heads", "Backgrounds", "Eyes", "Hands", "Spe
 const attributeKeys = ["Outfit", "Head", "Background", "Eyes", "Hands", "Special"];
 
 // Create a custom 1-of-1 electrum cluster for bch-mainnet
+/*
 const electrumCluster = new ElectrumCluster('Reapers', '1.5.1', 1, 1);
 electrumCluster.addServer('fulcrum.greyh.at', ElectrumTransport.WSS.Port, ElectrumTransport.WSS.Scheme);
 const electrum = network == "mainnet" ? electrumCluster : undefined;
 // Initialise cashscript ElectrumNetworkProvider
-const electrumServer = new ElectrumNetworkProvider(network, electrum);
+const electrumServer = new ElectrumNetworkProvider(network, electrum);*/
 
 // Render Checkboxes
 checkboxLists.forEach((checkboxList, index) => {
