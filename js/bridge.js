@@ -86,7 +86,7 @@ async function bridgeReapers(){
     return
   }
 
-  const signature = await signer.signMessage(userAddress);
+  const signature = await signer.signMessage(userCashTokensAddr);
   const rawResponse = await fetch(backendUrl+'/signbridging', {
     method: 'POST',
     headers: {
