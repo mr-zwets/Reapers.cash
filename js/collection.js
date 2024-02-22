@@ -124,7 +124,7 @@ if(urlParamAddr) setTimeout(async() => {
 
 if(displayFullCollection) setTimeout(async() => {
   let allReaperNumbers = [];
-  for (let i = 1; i <= 5000; i++) {allReaperNumbers.push(i);}
+  for (let i = 1; i <= 10000; i++) {allReaperNumbers.push(i);}
   updateCollection(allReaperNumbers);
   displayReapers();
   }, 500
