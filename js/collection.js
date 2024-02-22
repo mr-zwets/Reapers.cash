@@ -1,8 +1,8 @@
 import SignClient from '@walletconnect/sign-client';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { ElectrumCluster, ElectrumTransport } from 'electrum-cash';
-// import { ElectrumNetworkProvider } from "cashscript";
-import { projectId, ipfsLocationIcons, tokenId, network, wcMetadata } from "/js/mintingParams.js";
+import { ElectrumNetworkProvider } from "cashscript";
+import { projectId, ipfsLocationIcons, tokenId, network, wcMetadata } from "/js/nftConfigs.js";
 import { bigIntToVmNumber, binToHex, hexToBin, vmNumberToBigInt } from '@bitauth/libauth';
 import { listOutfits, listHeads, listBackgrounds, listEyes, listHands, listSpecials } from "/js/attributes.js"
 import bcmr from "../bitcoin-cash-metadata-registry.json"
@@ -16,19 +16,18 @@ const urlParamAddr = urlParams.get("addr");
 const urlParamFullCollection = urlParams.get("fullcollection");
 const displayFullCollection = urlParamFullCollection == "";
 
-// Define lists for ninja attributes
+// Define lists for reaper attributes
 const checkboxLists = [listOutfits, listHeads, listBackgrounds, listEyes, listHands, listSpecials];
 const itemsPerAttributeList = [18, 2, 23, 28, 23, 1];
 const attributeNames = ["Outfits", "Heads", "Backgrounds", "Eyes", "Hands", "Specials"];
 const attributeKeys = ["Outfit", "Head", "Background", "Eyes", "Hands", "Special"];
 
 // Create a custom 1-of-1 electrum cluster for bch-mainnet
-/*
 const electrumCluster = new ElectrumCluster('Reapers', '1.5.1', 1, 1);
 electrumCluster.addServer('fulcrum.greyh.at', ElectrumTransport.WSS.Port, ElectrumTransport.WSS.Scheme);
 const electrum = network == "mainnet" ? electrumCluster : undefined;
 // Initialise cashscript ElectrumNetworkProvider
-const electrumServer = new ElectrumNetworkProvider(network, electrum);*/
+const electrumServer = new ElectrumNetworkProvider(network, electrum);
 
 // Render Checkboxes
 checkboxLists.forEach((checkboxList, index) => {
@@ -51,15 +50,13 @@ checkboxLists.forEach((checkboxList, index) => {
     checkbox.setAttribute("id", attributeString);
     const label = checkboxTemplate.getElementById("forIdInput");
     label.setAttribute("for", attributeString);
-    checkbox.onclick = () => displayNinjas()
+    checkbox.onclick = () => displayReapers()
     // Add checkboxTemplate to list
     divCheckboxList.appendChild(checkboxTemplate);
   });
   Placeholder.replaceWith(divCheckboxList);
 })
 
-let unfilteredListNinjas = [];
-/*
 // 1. Setup Client with relay server
 const signClient = await SignClient.init({
   projectId,
@@ -92,8 +89,8 @@ const walletConnectModal = new WalletConnectModal({
   projectId: projectId,
   themeMode: 'dark',
   themeVariables: {
-    '--wcm-background-color': '#20c997',
-    '--wcm-accent-color': '#20c997',
+    '--wcm-background-color': '#be0000',
+    '--wcm-accent-color': '#be0000',
   },
   explorerExcludedWalletIds: 'ALL',
 });
@@ -113,47 +110,47 @@ if (lastSession && !urlParamAddr && !displayFullCollection) setTimeout(async() =
   const confirmReuse = confirm("The collection page is going to re-use your previous WalletConnect session, make sure you have your wallet open");
   if (confirmReuse) {
     session = lastSession;
-    fetchUserNinjas();
+    fetchUserReapers();
   }
 }, 500);
 
 // If urlParam has address, load collection 
 if(urlParamAddr) setTimeout(async() => {
-  const listCashninjas = await getNinjasOnAddr(urlParamAddr);
-  updateCollection(listCashninjas);
-  displayNinjas();
+  const listReapers = await getReapersOnAddr(urlParamAddr);
+  updateCollection(listReapers);
+  displayReapers();
   }, 500
 );
 
 if(displayFullCollection) setTimeout(async() => {
-  let allNinjaNumbers = [];
-  for (let i = 1; i <= 5000; i++) {allNinjaNumbers.push(i);}
-  updateCollection(allNinjaNumbers);
-  displayNinjas();
+  let allReaperNumbers = [];
+  for (let i = 1; i <= 5000; i++) {allReaperNumbers.push(i);}
+  updateCollection(allReaperNumbers);
+  displayReapers();
   }, 500
 );
 
 // Global variables
-let unfilteredListNinjas = [];
-let ninjasConnectedWallet = [];
+let unfilteredlistReapers = [];
+let reapersConnectedWallet = [];
 let connectedUserAddress = "";
 // Functionality fullCollection & myCollection buttons
 const fullCollectionButton = document.getElementById("FullCollection");
 const myCollectionButton = document.getElementById("myCollectionButton");
 fullCollectionButton.onclick = () => {
   window.history.replaceState({}, "", `${location.pathname}?fullcollection`);
-  let allNinjaNumbers = [];
-  for (let i = 1; i <= 5000; i++) {allNinjaNumbers.push(i);}
-  updateCollection(allNinjaNumbers);
-  displayNinjas();
+  let allReaperNumbers = [];
+  for (let i = 1; i <= 5000; i++) {allReaperNumbers.push(i);}
+  updateCollection(allReaperNumbers);
+  displayReapers();
 }
 myCollectionButton.onclick = async() => {
-  if(session) fetchUserNinjas();
+  if(session) fetchUserReapers();
   else if (lastSession && !urlParamAddr){
     const confirmReuse = confirm("The collection page is going to re-use your previous WalletConnect session, make sure you have your wallet open");
     if (confirmReuse) {
       session = lastSession;
-      fetchUserNinjas();
+      fetchUserReapers();
     }
   } else {
     const { uri, approval } = await signClient.connect({ requiredNamespaces });
@@ -162,67 +159,67 @@ myCollectionButton.onclick = async() => {
     session = await approval();
     // Close the QRCode modal in case it was open.
     walletConnectModal.closeModal();
-    fetchUserNinjas();
+    fetchUserReapers();
   };
 }
-async function fetchUserNinjas() {
-  if(!ninjasConnectedWallet.length){
+async function fetchUserReapers() {
+  if(!reapersConnectedWallet.length){
     const userAddress = await getUserAddress();
     connectedUserAddress = userAddress;
-    const listCashninjas = await getNinjasOnAddr(userAddress);
-    ninjasConnectedWallet = listCashninjas;
+    const listReapers = await getReapersOnAddr(userAddress);
+    document.getElementById("myCollectionButton").textContent = `My Collection (${listReapers.length})`
+    reapersConnectedWallet = listReapers;
   }
   window.history.replaceState({}, "", `${location.pathname}?addr=${connectedUserAddress}`);
-  updateCollection(ninjasConnectedWallet);
-  displayNinjas();
+  updateCollection(reapersConnectedWallet);
+  displayReapers();
 }
 
-async function getNinjasOnAddr(address){
+async function getReapersOnAddr(address){
   const userUtxos = await electrumServer.getUtxos(address);
-  const cashNinjaUtxos = userUtxos.filter(val => val?.token?.category == tokenId);
-  const listCashninjas = [];
-  cashNinjaUtxos.forEach(ninjaUtxo => {
-    const ninjaCommitment = ninjaUtxo.token.nft.commitment
-    const ninjaNumber = vmNumberToBigInt(hexToBin(ninjaCommitment)) + 1n;
-    listCashninjas.push(Number(ninjaNumber))
+  const cashReaperUtxos = userUtxos.filter(val => val?.token?.category == tokenId);
+  const listReapers = [];
+  cashReaperUtxos.forEach(reaperUtxo => {
+    const reaperCommitment = reaperUtxo.token.nft.commitment
+    const reaperNumber = vmNumberToBigInt(hexToBin(reaperCommitment)) + 1n;
+    listReapers.push(Number(reaperNumber))
   })
-  return listCashninjas
+  return listReapers
 }
-*/
 
 let allReaperNumbers = [];
 for (let i = 1; i <= 10_000; i++) {allReaperNumbers.push(i);}
 updateCollection(allReaperNumbers);
-displayNinjas();
+displayReapers();
 
-async function displayNinjas(offset = 0){
-  const filteredNinjaList = filterNinjaList(unfilteredListNinjas);
-  const listNinjas = filteredNinjaList.sort((a, b) => a - b);
+async function displayReapers(offset = 0){
+  const filteredReaperList = filterReaperList(unfilteredlistReapers);
+  const listReapers = filteredReaperList.sort((a, b) => a - b);
   const startPoint = offset * 100;
-  const slicedArray = listNinjas.slice(startPoint, startPoint + 100);
+  const slicedArray = listReapers.slice(startPoint, startPoint + 100);
   // Pagination logic
-  renderPagination(offset,filteredNinjaList.length);
+  renderPagination(offset,filteredReaperList.length);
 
   // Create the HTML rendering setup
-  const Placeholder = document.getElementById("PlaceholderNinjaList");
-  const ninjaList = document.createElement("div");
-  ninjaList.setAttribute("id", "PlaceholderNinjaList");
-  ninjaList.classList.add("g-6", "row");
-  const template = document.getElementById("ninja-template");
-  // Render list of cashninjas
+  const Placeholder = document.getElementById("PlaceholderReaperList");
+  const reaperList = document.createElement("div");
+  reaperList.setAttribute("id", "PlaceholderReaperList");
+  reaperList.classList.add("g-6", "row");
+  const template = document.getElementById("reaper-template");
+  // Render list of Reapers
   slicedArray.forEach(nftNumber => {
-    const ninjaTemplate = document.importNode(template.content, true);
-    const ninjaName = ninjaTemplate.getElementById("ninjaName");
-    const ninjaCommitment = binToHex(bigIntToVmNumber(BigInt(nftNumber -1)));
-    const ninjaData = nftMetadata[ninjaCommitment];
-    ninjaName.textContent = ninjaData?.name ?? `Ninja #${nftNumber}`;
-    const ninjaImage = ninjaTemplate.getElementById("ninjaImage");
-    ninjaImage.src = `https://ipfs.greyh.at/ipfs/${ipfsLocationIcons}/${nftNumber}.png`;
-    const reaperLink = ninjaTemplate.getElementById("reaperLink");
+    const reaperTemplate = document.importNode(template.content, true);
+    const reaperName = reaperTemplate.getElementById("reaperName");
+    const reaperCommitment = binToHex(bigIntToVmNumber(BigInt(nftNumber -1)));
+    const reaperData = nftMetadata[reaperCommitment];
+    reaperName.textContent = reaperData?.name ?? `Reaper #${nftNumber}`;
+    const reaperImage = reaperTemplate.getElementById("reaperImage");
+    reaperImage.src = `https://ipfs.greyh.at/ipfs/${ipfsLocationIcons}/${nftNumber}.png`;
+    const reaperLink = reaperTemplate.getElementById("reaperLink");
     reaperLink.href = './reapers.html?nr=' + nftNumber;
-    ninjaList.appendChild(ninjaTemplate);
+    reaperList.appendChild(reaperTemplate);
   });
-  Placeholder.replaceWith(ninjaList);
+  Placeholder.replaceWith(reaperList);
 }
 
 async function getUserAddress() {
@@ -242,7 +239,7 @@ async function getUserAddress() {
   };
 
 function updateCollection(newCollection) {
-  unfilteredListNinjas = newCollection;
+  unfilteredlistReapers = newCollection;
   // Create obj of attributes object to track unique items
   const attributeObjs = {};
   attributeKeys.forEach(attributeKey => {
@@ -250,19 +247,19 @@ function updateCollection(newCollection) {
   })
   
   // Create count of occurance for each attribute
-  unfilteredListNinjas.forEach(ninjaNumber => {
-    const ninjaCommitment = binToHex(bigIntToVmNumber(BigInt(ninjaNumber -1)));
-    const ninjaData = nftMetadata[ninjaCommitment];
-    const ninjaAttributes = ninjaData?.extensions.attributes;
+  unfilteredlistReapers.forEach(reaperNumber => {
+    const reaperCommitment = binToHex(bigIntToVmNumber(BigInt(reaperNumber -1)));
+    const reaperData = nftMetadata[reaperCommitment];
+    const reaperAttributes = reaperData?.extensions.attributes;
     
-    if(ninjaAttributes.Special == "None"){
-      Object.keys(ninjaAttributes).forEach((attributeKey, index) => {
+    if(reaperAttributes.Special == "None"){
+      Object.keys(reaperAttributes).forEach((attributeKey, index) => {
         const attibuteObj = attributeObjs[attributeKey];
-        const attributeValue = ninjaAttributes[attributeKey];
+        const attributeValue = reaperAttributes[attributeKey];
         if(attibuteObj[attributeValue]) attibuteObj[attributeValue] += 1;
         else attibuteObj[attributeValue] = 1;
       })
-    } else {attributeObjs["Special"][ninjaAttributes["Special"]] = 1}
+    } else {attributeObjs["Special"][reaperAttributes["Special"]] = 1}
   });
   delete attributeObjs["Special"]["None"]
 
@@ -337,7 +334,7 @@ function renderPagination(offset, listLength){
       else endingDots.style.display = "flex";
     }
     setActiveButton(activePageButton);
-    displayNinjas(pageNumber - 1);
+    displayReapers(pageNumber - 1);
   }
   // reset active page button after filtering
   if(offset == 0) setActiveButton("pageOne")
@@ -380,15 +377,15 @@ function renderPagination(offset, listLength){
   }
 }
 
-// Fuctions for filtering the NinjaList
-function filterNinjaList(listCashninjas){
+// Fuctions for filtering the ReaperList
+function filterReaperList(listReapers){
   const checkboxes = document.getElementsByName("checkbox");
   // Keeps track of the filtering, updated after each category
-  let filteredNinjaList = listCashninjas;
+  let filteredReaperList = listReapers;
   let sumItemCountCategories = 0;
   // Filtering within category interpreted as OR, across category as AND
   for (const [categoryNr, nrItems] of itemsPerAttributeList.entries()) {
-    // Keeps track of the items in a category, becomes new filteredNinjaList at end of category and starts fresh again
+    // Keeps track of the items in a category, becomes new filteredReaperList at end of category and starts fresh again
     let categoryList = [];
     let hasFiltered = false;
     for(let i= 0; i < nrItems; i++ ){
@@ -400,21 +397,21 @@ function filterNinjaList(listCashninjas){
         const classToFilter = checkbox.id;
         const attributeToFilterOn = classToFilter.replace(/_/g, ' ').replace(categoryToFilterOn,"");
         // Filters the current NFT list
-        filteredNinjaList.forEach(ninjaNumber => {
-          const ninjaCommitment = binToHex(bigIntToVmNumber(BigInt(ninjaNumber - 1)));
-          const ninjaData = nftMetadata[ninjaCommitment];
-          const ninjaAttributes = ninjaData?.extensions.attributes;
-          // Only run these check for ninja numbers with metadata available
-          if(ninjaAttributes){
-            if(ninjaAttributes[categoryToFilterOn] == attributeToFilterOn) categoryList.push(ninjaNumber);
-            if(categoryToFilterOn == "Special" && ninjaAttributes["Special"] != "None") categoryList.push(ninjaNumber)
+        filteredReaperList.forEach(reaperNumber => {
+          const reaperCommitment = binToHex(bigIntToVmNumber(BigInt(reaperNumber - 1)));
+          const reaperData = nftMetadata[reaperCommitment];
+          const reaperAttributes = reaperData?.extensions.attributes;
+          // Only run these check for reaper numbers with metadata available
+          if(reaperAttributes){
+            if(reaperAttributes[categoryToFilterOn] == attributeToFilterOn) categoryList.push(reaperNumber);
+            if(categoryToFilterOn == "Special" && reaperAttributes["Special"] != "None") categoryList.push(reaperNumber)
           }
         })
       }
     }
     // If category has filtered, set new filteredList for next category
-    if(hasFiltered) filteredNinjaList = categoryList;
+    if(hasFiltered) filteredReaperList = categoryList;
     sumItemCountCategories += nrItems;
   }
-  return filteredNinjaList
+  return filteredReaperList
 }

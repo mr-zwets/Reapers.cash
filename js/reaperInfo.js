@@ -1,6 +1,6 @@
 import bcmr from "../bitcoin-cash-metadata-registry.json"
 import { bigIntToVmNumber, binToHex } from '@bitauth/libauth';
-import { ipfsLocationImage, tokenId } from "/js/mintingParams.js";
+import { ipfsLocationImage, tokenId } from "/js/nftConfigs.js";
 
 // Find nftMetadata in BCMR file
 const nftMetadata = bcmr.identities[tokenId]["2023-10-26T07:39:35.670Z"].token.nfts.parse.types;

@@ -15,6 +15,7 @@
     "@bitauth/libauth": "^2.0.0",
     "@walletconnect/modal": "^2.6.1",
     "@walletconnect/sign-client": "^2.10.1",
+    "cashscript": "^0.9.0",
     "electrum-cash": "^2.0.10",
     "ethers": "^5.7.2"
   }
