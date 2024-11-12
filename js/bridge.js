@@ -64,7 +64,8 @@ getNftsAddress(false)
 setInterval(() => getNftsAddress(true), 5000)
 setInterval(() => getNftsAddress(false), 5000)
 
-async function getNftsAddress(reapers=true){
+// takes boolean parameter to getNftsAddress for reapers (true) or summons (false)
+async function getNftsAddress(reapers){
   try{
     const htmlElement = reapers ? reaperNumbers : summonNumbers
     const backendUrl = reapers ? reapersBridgeBackend : summonsBridgeBackend
@@ -126,7 +127,7 @@ async function bridgeReapersAndSummons(){
   // reset changed state
   document.getElementById("addressInput").value = ""
   document.getElementById("bridgeButton").classList = "btn btn-secondary rounded-4 mt-2"
-  getNftsAddress()
+  getNftsAddress(true)
   getNftsAddress(false)
 }
 window.bridgeReapers = bridgeReapersAndSummons
