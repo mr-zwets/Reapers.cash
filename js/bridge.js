@@ -53,8 +53,8 @@ window.validateAddress = (event) => {
 // For this, you need the account signer...
 const signer = provider.getSigner()
 const userAddress = await signer.getAddress()
-let listReaperNumbers
-let listSummonNumber
+let listReaperNumbers = []
+let listSummonNumber = []
 
 const reaperNumbers = document.getElementById("reaperNumbers")
 const summonNumbers = document.getElementById("summonNumbers")
