@@ -476,7 +476,7 @@
               href="https://www.instagram.com/thereapernft/" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a></li>
         </ul>
         <!-- Copyright Text -->
-        <p class="text-center mb-4">Copyright © 2021-2024 <a href="#" class="fw-500">Reapers</a>. All Rights Reserved.
+        <p class="text-center mb-4">Copyright © 2021-<span id="currentYear"></span> <a href="#" class="fw-500">Reapers</a>. All Rights Reserved.
         </p>
       </div>
     </footer>
@@ -491,6 +491,10 @@
       class="fa fa-chevron-up"></i></a>
 
   <!-- JavaScript Imports-->
+  <script>
+    const currentYear = new Date().getFullYear();
+    document.getElementById('currentYear').textContent = currentYear;
+  </script>
   <script src="/vendor/jquery/jquery.min.js"></script>
   <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <!-- Owl Carousel -->
