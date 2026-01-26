@@ -1,7 +1,6 @@
 import SignClient from '@walletconnect/sign-client';
 import { WalletConnectModal } from '@walletconnect/modal';
-import { ElectrumCluster, ElectrumTransport } from 'electrum-cash';
-import { ElectrumNetworkProvider } from "cashscript";
+import { ElectrumClient } from '@electrum-cash/network';
 import { projectId, ipfsLocationIcons, tokenId, network, wcMetadata } from "/js/nftConfigs.js";
 import { bigIntToVmNumber, binToHex, hexToBin, vmNumberToBigInt } from '@bitauth/libauth';
 import { listOutfits, listHeads, listBackgrounds, listEyes, listHands, listSpecials } from "/js/attributes.js"
@@ -22,12 +21,24 @@ const itemsPerAttributeList = [18, 2, 23, 28, 23, 1];
 const attributeNames = ["Outfits", "Heads", "Backgrounds", "Eyes", "Hands", "Specials"];
 const attributeKeys = ["Outfit", "Head", "Background", "Eyes", "Hands", "Special"];
 
-// Create a custom 1-of-1 electrum cluster for bch-mainnet
-const electrumCluster = new ElectrumCluster('Reapers', '1.5.1', 1, 1);
-electrumCluster.addServer('fulcrum.greyh.at', ElectrumTransport.WSS.Port, ElectrumTransport.WSS.Scheme);
-const electrum = network == "mainnet" ? electrumCluster : undefined;
-// Initialise cashscript ElectrumNetworkProvider
-const electrumServer = new ElectrumNetworkProvider(network, electrum);
+// Create Electrum client for BCH mainnet
+// Using Electrum Cash Protocol 1.5.1 (required for blockchain.address.listunspent and token_filter)
+const electrumClient = new ElectrumClient('Reapers', '1.5.1', 'fulcrum.greyh.at');
+
+// Get UTXOs for an address using Electrum protocol
+async function getUtxosElectrum(address) {
+  await electrumClient.connect();
+  const utxos = await electrumClient.request('blockchain.address.listunspent', address, 'include_tokens');
+  return utxos.map(utxo => ({
+    txid: utxo.tx_hash,
+    vout: utxo.tx_pos,
+    satoshis: BigInt(utxo.value),
+    token: utxo.token_data ? {
+      ...utxo.token_data,
+      amount: BigInt(utxo.token_data.amount),
+    } : undefined,
+  }));
+}
 
 // Render Checkboxes
 checkboxLists.forEach((checkboxList, index) => {
@@ -170,7 +181,7 @@ async function fetchUserReapers() {
 }
 
 async function getReapersOnAddr(address){
-  const userUtxos = await electrumServer.getUtxos(address);
+  const userUtxos = await getUtxosElectrum(address);
   const cashReaperUtxos = userUtxos.filter(val => val?.token?.category == tokenId);
   const listReapers = [];
   cashReaperUtxos.forEach(reaperUtxo => {
