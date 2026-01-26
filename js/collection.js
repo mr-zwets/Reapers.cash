@@ -51,26 +51,46 @@ checkboxLists.forEach((checkboxList, index) => {
   Placeholder.replaceWith(divCheckboxList);
 })
 
-// Fetch bridged reapers
-const transactions = await getMintedNfts(mintingAddress);
-
-const bridgedReapers = []
-transactions.forEach(tx => {
-  tx.vout.forEach(output => {
-    if(output.tokenData && output.tokenData.nft && output.tokenData.nft.capability == "none"){
-      const reaperCommitment = output.tokenData.nft.commitment
-      const reaperNumber = vmNumberToBigInt(hexToBin(reaperCommitment)) + 1n;
-      bridgedReapers.push(reaperNumber);
-    }
-  })
-})
-const bridgedCount = bridgedReapers.length;
-const bridgedFormatted = bridgedCount.toLocaleString('en-US');
-document.getElementById("bridgedCount").textContent = `${bridgedFormatted}/10,000 Reapers bridged`;
-
 // Blockchain filter handlers
 document.getElementById("filterBitcoinCash").onclick = () => displayReapers();
 document.getElementById("filterSmartBCH").onclick = () => displayReapers();
+
+// Bridged reapers data (populated async)
+let bridgedReapers = [];
+let bridgedDataLoaded = false;
+
+// Initial render (before any async operations)
+let unfilteredlistReapers = [];
+let allReaperNumbers = [];
+for (let i = 1; i <= 10_000; i++) {
+  allReaperNumbers.push(i);
+}
+updateCollection(allReaperNumbers);
+displayReapers();
+
+// Fetch bridged reapers (non-blocking)
+getMintedNfts(mintingAddress).then(transactions => {
+  transactions.forEach(tx => {
+    tx.vout.forEach(output => {
+      if(output.tokenData && output.tokenData.nft && output.tokenData.nft.capability == "none"){
+        const reaperCommitment = output.tokenData.nft.commitment
+        const reaperNumber = vmNumberToBigInt(hexToBin(reaperCommitment)) + 1n;
+        bridgedReapers.push(reaperNumber);
+      }
+    })
+  });
+  bridgedDataLoaded = true;
+
+  // Update bridged count display
+  const bridgedFormatted = bridgedReapers.length.toLocaleString('en-US');
+  document.getElementById("bridgedCount").textContent = `${bridgedFormatted}/10,000 Reapers bridged`;
+
+  // Update blockchain counts in sidebar
+  updateCollection(unfilteredlistReapers);
+
+  // Re-render to show badges
+  displayReapers();
+});
 
 // WalletConnect Setup
 
@@ -129,7 +149,7 @@ if (lastSession && !urlParamAddr && !displayFullCollection) setTimeout(async() =
     session = lastSession;
     fetchUserReapers();
   }
-}, 500);
+}, 1000);
 
 // If urlParam has address, load collection 
 if(urlParamAddr) setTimeout(async() => {
@@ -148,7 +168,6 @@ if(displayFullCollection) setTimeout(async() => {
 );
 
 // Global variables
-let unfilteredlistReapers = [];
 let reapersConnectedWallet = [];
 let connectedUserAddress = "";
 // Functionality fullCollection & myCollection buttons
@@ -198,11 +217,6 @@ async function getReapersOnAddr(address){
   return listReapers
 }
 
-let allReaperNumbers = [];
-for (let i = 1; i <= 10_000; i++) {allReaperNumbers.push(i);}
-updateCollection(allReaperNumbers);
-displayReapers();
-
 async function displayReapers(offset = 0){
   const filteredReaperList = filterReaperList(unfilteredlistReapers);
   const listReapers = filteredReaperList.sort((a, b) => a - b);
@@ -230,10 +244,12 @@ async function displayReapers(offset = 0){
     reaperLink.href = './reapers.html?nr=' + nftNumber;
     // Show bridged status badge
     const bridgedBadge = reaperTemplate.getElementById("bridgedBadge");
-    const isBridged = bridgedReapers.includes(BigInt(nftNumber));
-    bridgedBadge.style.display = "block";
-    bridgedBadge.textContent = isBridged ? "Bridged" : "Not Bridged";
-    bridgedBadge.classList.add(isBridged ? "bg-success" : "bg-secondary");
+    if (bridgedDataLoaded) {
+      const isBridged = bridgedReapers.includes(BigInt(nftNumber));
+      bridgedBadge.style.display = "block";
+      bridgedBadge.textContent = isBridged ? "Bridged" : "Not Bridged";
+      bridgedBadge.classList.add(isBridged ? "bg-success" : "bg-secondary");
+    }
     reaperList.appendChild(reaperTemplate);
   });
   Placeholder.replaceWith(reaperList);
