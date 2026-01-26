@@ -1,7 +1,7 @@
 import SignClient from '@walletconnect/sign-client';
 import { WalletConnectModal } from '@walletconnect/modal';
-import { ElectrumClient } from '@electrum-cash/network';
-import { projectId, ipfsLocationIcons, tokenId, network, wcMetadata } from "/js/nftConfigs.js";
+import { projectId, ipfsLocationIcons, tokenId, network, mintingAddress, wcMetadata } from "/js/nftConfigs.js";
+import { getUtxos, getMintedNfts } from "/js/electrum.js";
 import { bigIntToVmNumber, binToHex, hexToBin, vmNumberToBigInt } from '@bitauth/libauth';
 import { listOutfits, listHeads, listBackgrounds, listEyes, listHands, listSpecials } from "/js/attributes.js"
 import bcmr from "../bitcoin-cash-metadata-registry.json"
@@ -22,25 +22,6 @@ const checkboxLists = [listOutfits, listHeads, listBackgrounds, listEyes, listHa
 const itemsPerAttributeList = [18, 2, 23, 28, 23, 1];
 const attributeNames = ["Outfits", "Heads", "Backgrounds", "Eyes", "Hands", "Specials"];
 const attributeKeys = ["Outfit", "Head", "Background", "Eyes", "Hands", "Special"];
-
-// Create Electrum client for BCH mainnet
-// Using Electrum Cash Protocol 1.5.1 (required for blockchain.address.listunspent and token_filter)
-const electrumClient = new ElectrumClient('Reapers', '1.5.1', 'fulcrum.greyh.at');
-
-// Get UTXOs for an address using Electrum protocol
-async function getUtxosElectrum(address) {
-  await electrumClient.connect();
-  const utxos = await electrumClient.request('blockchain.address.listunspent', address, 'include_tokens');
-  return utxos.map(utxo => ({
-    txid: utxo.tx_hash,
-    vout: utxo.tx_pos,
-    satoshis: BigInt(utxo.value),
-    token: utxo.token_data ? {
-      ...utxo.token_data,
-      amount: BigInt(utxo.token_data.amount),
-    } : undefined,
-  }));
-}
 
 // Render Checkboxes
 checkboxLists.forEach((checkboxList, index) => {
@@ -69,6 +50,29 @@ checkboxLists.forEach((checkboxList, index) => {
   });
   Placeholder.replaceWith(divCheckboxList);
 })
+
+// Fetch bridged reapers
+const transactions = await getMintedNfts(mintingAddress);
+
+const bridgedReapers = []
+transactions.forEach(tx => {
+  tx.vout.forEach(output => {
+    if(output.tokenData && output.tokenData.nft && output.tokenData.nft.capability == "none"){
+      const reaperCommitment = output.tokenData.nft.commitment
+      const reaperNumber = vmNumberToBigInt(hexToBin(reaperCommitment)) + 1n;
+      bridgedReapers.push(reaperNumber);
+    }
+  })
+})
+const bridgedCount = bridgedReapers.length;
+const bridgedFormatted = bridgedCount.toLocaleString('en-US');
+document.getElementById("bridgedCount").textContent = `${bridgedFormatted}/10,000 Reapers bridged`;
+
+// Blockchain filter handlers
+document.getElementById("filterBitcoinCash").onclick = () => displayReapers();
+document.getElementById("filterSmartBCH").onclick = () => displayReapers();
+
+// WalletConnect Setup
 
 // 1. Setup Client with relay server
 const signClient = await SignClient.init({
@@ -183,7 +187,7 @@ async function fetchUserReapers() {
 }
 
 async function getReapersOnAddr(address){
-  const userUtxos = await getUtxosElectrum(address);
+  const userUtxos = await getUtxos(address);
   const cashReaperUtxos = userUtxos.filter(val => val?.token?.category == tokenId);
   const listReapers = [];
   cashReaperUtxos.forEach(reaperUtxo => {
@@ -224,6 +228,12 @@ async function displayReapers(offset = 0){
     reaperImage.src = `https://ipfs.greyh.at/ipfs/${ipfsLocationIcons}/${nftNumber}.png`;
     const reaperLink = reaperTemplate.getElementById("reaperLink");
     reaperLink.href = './reapers.html?nr=' + nftNumber;
+    // Show bridged status badge
+    const bridgedBadge = reaperTemplate.getElementById("bridgedBadge");
+    const isBridged = bridgedReapers.includes(BigInt(nftNumber));
+    bridgedBadge.style.display = "block";
+    bridgedBadge.textContent = isBridged ? "Bridged" : "Not Bridged";
+    bridgedBadge.classList.add(isBridged ? "bg-success" : "bg-secondary");
     reaperList.appendChild(reaperTemplate);
   });
   Placeholder.replaceWith(reaperList);
@@ -292,6 +302,16 @@ function updateCollection(newCollection) {
       itemCountElem.textContent = itemCount ?? 0;
     });
   })
+
+  // Display blockchain counts
+  let countBCH = 0;
+  let countSmartBCH = 0;
+  unfilteredlistReapers.forEach(reaperNumber => {
+    if (bridgedReapers.includes(BigInt(reaperNumber))) countBCH++;
+    else countSmartBCH++;
+  });
+  document.getElementById("countBitcoinCash").textContent = countBCH;
+  document.getElementById("countSmartBCH").textContent = countSmartBCH;
 }
 
 function renderPagination(offset, listLength){
@@ -389,6 +409,19 @@ function filterReaperList(listReapers){
   const checkboxes = document.getElementsByName("checkbox");
   // Keeps track of the filtering, updated after each category
   let filteredReaperList = listReapers;
+
+  // Filter by blockchain
+  const filterBCH = document.getElementById("filterBitcoinCash").checked;
+  const filterSmartBCH = document.getElementById("filterSmartBCH").checked;
+  if (filterBCH || filterSmartBCH) {
+    filteredReaperList = filteredReaperList.filter(reaperNumber => {
+      const isBridged = bridgedReapers.includes(BigInt(reaperNumber));
+      if (filterBCH && filterSmartBCH) return true;
+      if (filterBCH) return isBridged;
+      if (filterSmartBCH) return !isBridged;
+      return true;
+    });
+  }
   let sumItemCountCategories = 0;
   // Filtering within category interpreted as OR, across category as AND
   for (const [categoryNr, nrItems] of itemsPerAttributeList.entries()) {

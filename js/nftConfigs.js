@@ -10,6 +10,7 @@ const ipfsLocationImage ="bafybeif5vhnowtqre7c3z5tgezccfgvhelqlgp54np6jsersuv7sy
 // Token Params
 const tokenId = "945555908fa8f208b6a6588004037b886f70ab1641bae6720f2862afb7af7983";
 const network = "mainnet";
+const mintingAddress = "bitcoincash:qrrvryml3e6cfvmvpg0nnftk2hk3zqh2rq2wtlxcjg";
 
 // Wallet Connect Metadata
 const wcMetadata = {
@@ -19,4 +20,4 @@ const wcMetadata = {
   icons: ['https://reapers.cash/images/logo.png']
 };
 
-export { projectId, ipfsLocationIcons, ipfsLocationImage, tokenId, network, wcMetadata };
+export { projectId, ipfsLocationIcons, ipfsLocationImage, tokenId, network, mintingAddress, wcMetadata };
