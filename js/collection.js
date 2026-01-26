@@ -7,7 +7,9 @@ import { listOutfits, listHeads, listBackgrounds, listEyes, listHands, listSpeci
 import bcmr from "../bitcoin-cash-metadata-registry.json"
 
 // Find nftMetadata in BCMR file
-const nftMetadata = bcmr.identities[tokenId]["2023-10-26T07:39:35.670Z"].token.nfts.parse.types;
+const identity = bcmr.identities[tokenId];
+const firstHistoryEntry = identity[Object.keys(identity)[0]];
+const nftMetadata = firstHistoryEntry.token.nfts.parse.types;
 
 // Read URL Params
 const urlParams = new URLSearchParams(window.location.search);
