@@ -1,6 +1,5 @@
-import SignClient from '@walletconnect/sign-client';
-import { WalletConnectModal } from '@walletconnect/modal';
-import { projectId, ipfsLocationIcons, tokenId, network, mintingAddress, wcMetadata } from "/js/nftConfigs.js";
+import { ipfsLocationIcons, tokenId, mintingAddress } from "/js/nftConfigs.js";
+import { lastSession, getUserAddress, connectWallet } from "/js/walletconnect.js";
 import { getUtxos, getMintedNfts } from "/js/electrum.js";
 import { bigIntToVmNumber, binToHex, hexToBin, vmNumberToBigInt } from '@bitauth/libauth';
 import { listOutfits, listHeads, listBackgrounds, listEyes, listHands, listSpecials } from "/js/attributes.js"
@@ -92,56 +91,7 @@ getMintedNfts(mintingAddress).then(transactions => {
   displayReapers();
 });
 
-// WalletConnect Setup
-
-// 1. Setup Client with relay server
-const signClient = await SignClient.init({
-  projectId,
-  // optional parameters
-  relayUrl: 'wss://relay.walletconnect.com',
-  metadata: wcMetadata
-});
-
-// Get last WalletConnect session from local storage is there is any
-const lastKeyIndex = signClient.session.getAll().length - 1;
-const lastSession = signClient.session.getAll()[lastKeyIndex];
-
-// Handle session events
-signClient.on('session_event', ({ event }) => {
-  console.log('session_event');
-  console.log(event);
-});
-
-signClient.on('session_update', ({ topic, params }) => {
-  console.log('session_update');
-  console.log(params);
-});
-
-signClient.on('session_delete', () => {
-  console.log('session_delete');
-});
-
-// Connect Client.
-const walletConnectModal = new WalletConnectModal({
-  projectId: projectId,
-  themeMode: 'dark',
-  themeVariables: {
-    '--wcm-background-color': '#be0000',
-    '--wcm-accent-color': '#be0000',
-  },
-  explorerExcludedWalletIds: 'ALL',
-});
-
-const connectedChain = network == "mainnet" ? "bch:bitcoincash" : "bch:bchtest";
-const requiredNamespaces = {
-  bch: {
-    chains: [connectedChain],
-    methods: ['bch_getAddresses', 'bch_signTransaction', 'bch_signMessage'],
-    events: ['addressesChanged'],
-  },
-};
-
-// Try to reconnect to previous session on startup
+// Session state
 let session;
 if (lastSession && !urlParamAddr && !displayFullCollection) setTimeout(async() => {
   const confirmReuse = confirm("The collection page is going to re-use your previous WalletConnect session, make sure you have your wallet open");
@@ -183,18 +133,13 @@ fullCollectionButton.onclick = () => {
 myCollectionButton.onclick = async() => {
   if(session) fetchUserReapers();
   else {
-    const { uri, approval } = await signClient.connect({ requiredNamespaces });
-    await walletConnectModal.openModal({ uri });
-    // Await session approval from the wallet.
-    session = await approval();
-    // Close the QRCode modal in case it was open.
-    walletConnectModal.closeModal();
+    session = await connectWallet();
     fetchUserReapers();
   };
 }
 async function fetchUserReapers() {
   if(!reapersConnectedWallet.length){
-    const userAddress = await getUserAddress();
+    const userAddress = await getUserAddress(session);
     connectedUserAddress = userAddress;
     const listReapers = await getReapersOnAddr(userAddress);
     document.getElementById("myCollectionButton").textContent = `My Collection (${listReapers.length})`
@@ -254,22 +199,6 @@ async function displayReapers(offset = 0){
   });
   Placeholder.replaceWith(reaperList);
 }
-
-async function getUserAddress() {
-    try {
-      const result = await signClient.request({
-        chainId: connectedChain,
-        topic: session.topic,
-        request: {
-          method: "bch_getAddresses",
-          params: {},
-        },
-      });
-      return result[0];
-    } catch (error) {
-      return undefined;
-    }
-  };
 
 function updateCollection(newCollection) {
   unfilteredlistReapers = newCollection;

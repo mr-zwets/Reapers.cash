@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="images/favicon.ico" rel="icon" />
+  <title>reapers.cash - Summons Collection</title>
+  <meta name="description" content="First Reapers Summons - 1,111 unique NFTs">
+
+  <!-- Web Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="vendor/font-awesome/css/all.min.css" />
+  <link rel="stylesheet" type="text/css" href="vendor/owl.carousel/assets/owl.carousel.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/stylesheet.css" />
+  <link id="color-switcher" type="text/css" rel="stylesheet" href="css/color-red.css" />
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#header-nav" data-bs-smooth-scroll="true" data-bs-offset="0" class="hero-bg"
+  style="background-image:url('images/bg.png');">
+
+  <!-- Preloader -->
+  <div class="preloader preloader-dark">
+    <div class="lds-ellipsis">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+  <!-- Preloader End -->
+
+  <!-- Document Wrapper -->
+  <div id="main-wrapper">
+
+    <!-- Header -->
+    <header id="header" class="sticky-top-slide">
+      <nav class="primary-menu navbar navbar-expand-lg navbar-dark bg-dark fw-500 border-bottom-0">
+        <div class="container position-relative">
+          <div class="col-auto col-lg-auto">
+            <a class="logo" href="index.html" title="Reapers">
+              <h1 class="text-10 fw-600" style="font-family: OctoberCrow; color: #be0000;">The Reapers</h1>
+            </a>
+          </div>
+          <div class="col navbar-accordion">
+            <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse"
+              data-bs-target="#header-nav"><span></span><span></span><span></span></button>
+            <div id="header-nav" class="collapse navbar-collapse justify-content-end">
+              <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/#home">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="./bridge.html">Bridge <sup>live</sup></a></li>
+                <li class="nav-item"><a class="nav-link" href="/#origin">Origin</a></li>
+                <li class="nav-item"><a class="nav-link" href="./collection.html">Collection</a></li>
+                <li class="nav-item"><a class="nav-link active" href="./summons-collection.html">Summons</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#team">Team</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#blog">Blog</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#faq">FAQ</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Content -->
+    <div id="content" role="main">
+      <div class="section pb-0">
+        <!-- Page Heading-->
+        <div class="container d-flex justify-content-center align-items-center gap-3 my-5 py-4 flex-wrap">
+          <div class="btn btn-lg btn-primary rounded-4" id="myCollectionButton">My Collection</div>
+          <div class="btn btn-lg btn-light rounded-4" id="FullCollection">Full Collection</div>
+        </div>
+
+        <div class="container mt-3">
+          <div class="row g-5">
+            <!-- Side Panel -->
+            <aside class="col-lg-3">
+              <div class="border border-secondary border-opacity-50 shadow rounded-4 p-3 pb-0">
+                <div class="accordion accordion-dark accordion-flush arrow-end mt-n3" id="toggleAlternate">
+                  <!-- Blockchain Filter -->
+                  <div class="accordion-item">
+                    <div class="accordion-header" id="blockchainHeader">
+                      <button class="accordion-button collapsed d-flex justify-content-between align-items-center" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#toggleBlockchain" aria-expanded="false"
+                        aria-controls="toggleBlockchain">
+                        Blockchain <small class="opacity-8">2</small>
+                      </button>
+                    </div>
+                    <div id="toggleBlockchain" class="accordion-collapse collapse" aria-labelledby="blockchainHeader">
+                      <div class="accordion-body px-0 mt-n2">
+                        <div class="form-check my-2">
+                          <input class="form-check-input" type="checkbox" name="blockchainFilter" id="filterBitcoinCash">
+                          <label class="form-check-label d-flex justify-content-between align-items-center" for="filterBitcoinCash">
+                            <span>Bitcoin Cash</span>
+                            <small id="countBitcoinCash" class="opacity-8">0</small>
+                          </label>
+                        </div>
+                        <div class="form-check my-2">
+                          <input class="form-check-input" type="checkbox" name="blockchainFilter" id="filterSmartBCH">
+                          <label class="form-check-label d-flex justify-content-between align-items-center" for="filterSmartBCH">
+                            <span>smartBCH</span>
+                            <small id="countSmartBCH" class="opacity-8">0</small>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Media Type Filter -->
+                  <div class="accordion-item">
+                    <div class="accordion-header" id="mediaTypeHeader">
+                      <button class="accordion-button collapsed d-flex justify-content-between align-items-center" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#toggleMediaType" aria-expanded="false"
+                        aria-controls="toggleMediaType">
+                        Media Type <small class="opacity-8">2</small>
+                      </button>
+                    </div>
+                    <div id="toggleMediaType" class="accordion-collapse collapse" aria-labelledby="mediaTypeHeader">
+                      <div class="accordion-body px-0 mt-n2">
+                        <div class="form-check my-2">
+                          <input class="form-check-input" type="checkbox" name="mediaTypeFilter" id="filterImage">
+                          <label class="form-check-label d-flex justify-content-between align-items-center" for="filterImage">
+                            <span>Image</span>
+                            <small id="countImage" class="opacity-8">0</small>
+                          </label>
+                        </div>
+                        <div class="form-check my-2">
+                          <input class="form-check-input" type="checkbox" name="mediaTypeFilter" id="filterVideo">
+                          <label class="form-check-label d-flex justify-content-between align-items-center" for="filterVideo">
+                            <span>Video</span>
+                            <small id="countVideo" class="opacity-8">0</small>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="bridgedInfo" class="text-light text-3 mt-3 ms-3"><span id="bridgedCount">...</span></div>
+            </aside>
+
+            <!-- Summons Grid -->
+            <div class="col-lg-9">
+              <div class="col-lg-12">
+                <div id="PlaceholderSummonsList"></div>
+              </div>
+            </div>
+
+            <!-- Rendering Template Summons -->
+            <template id="summons-template">
+              <div class="col-sm-6 col-md-3 mb-3 summons">
+                <a id="summonsLink" target="_blank">
+                <div class="position-relative bg-dark-2 shadow rounded-4" style="width: fit-content; margin: auto;">
+                  <span id="bridgedBadge" class="badge position-absolute top-0 end-0 m-2" style="display: none;"></span>
+                  <video id="summonsVideo" class="img-fluid d-flex rounded-4 rounded-bottom-0" autoplay loop muted playsinline preload="none"
+                    style="margin: auto; width: 222px; aspect-ratio: 1; display: none;"></video>
+                  <img id="summonsImage" class="img-fluid d-flex rounded-4 rounded-bottom-0" loading="lazy" decoding="async"
+                    style="margin: auto; width: 222px; aspect-ratio: 1;">
+                  <div class="p-4" style="max-width: 256px;">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <h4 id="summonsName" class="text-3 link-light text-truncate mb-0"
+                        style="white-space: normal; text-align: center;"></h4>
+                    </div>
+                  </div>
+                </div>
+                </a>
+              </div>
+            </template>
+
+            <!-- Pagination -->
+            <ul class="pagination pagination-lg justify-content-center mt-5 mb-0" style="display: none;">
+              <li class="page-item" id="previousPage"> <a class="page-link" href="#" tabindex="-1"><i
+                    class="fas fa-angle-left"></i></a> </li>
+              <li class="page-item active" id="pageOne"><a class="page-link" href="#">1</a></li>
+              <li class="page-item" id="pageTwo"><a class="page-link" href="#">2</a></li>
+              <li id="startingDots" style="display: none;"
+                class="page-item align-content-center flex-wrap text-muted text-5 mx-1">......</li>
+              <li class="page-item" id="pageMiddle"><a class="page-link" href="#">3</a></li>
+              <li id="endingDots" class="page-item align-content-center flex-wrap text-muted text-5 mx-1">......</li>
+              <li class="page-item" id="pageLast"><a class="page-link" href="#">50</a></li>
+              <li class="page-item" id="nextPage"> <a class="page-link" href="#"><i class="fas fa-angle-right"></i></a>
+              </li>
+              <li class="page-item" id="skipPages"> <a class="page-link" href="#"><i
+                    class="fas fa-chevron-double-right"></i></a> </li>
+            </ul>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer id="footer" class="section footer-dark my-4">
+    <div class="container">
+      <ul class="social-icons social-icons-dark social-icons-lg justify-content-center mb-4">
+        <li class="social-icons-telegram"><a class="rounded-4" data-bs-toggle="tooltip" href="https://t.me/ReapersNFT"
+            target="_blank" title="Telegram"><i class="fab fa-telegram-plane"></i></a></li>
+        <li class="social-icons-twitter"><a class="rounded-4" data-bs-toggle="tooltip"
+            href="https://twitter.com/ReapersNFT" target="_blank" title="Twitter"><i
+              class="fab fa-twitter"></i></a></li>
+        <li class="social-icons-youtube"><a class="rounded-4" data-bs-toggle="tooltip"
+            href="https://www.youtube.com/@reapersnft" target="_blank" title="Youtube"><i
+              class="fab fa-youtube"></i></a></li>
+        <li class="social-icons-instagram"><a class="rounded-4" data-bs-toggle="tooltip"
+            href="https://www.instagram.com/thereapernft/" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a></li>
+      </ul>
+      <p class="text-center mb-4">Copyright © 2021-<span id="currentYear"></span> <a href="#" class="fw-500">Reapers</a>. All Rights Reserved.
+      </p>
+    </div>
+  </footer>
+
+  </div>
+
+  <a id="back-to-top" data-bs-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i
+      class="fa fa-chevron-up"></i></a>
+
+  <script>
+    const currentYear = new Date().getFullYear();
+    document.getElementById('currentYear').textContent = currentYear;
+  </script>
+  <script src="js/summons-collection.js" type="module"></script>
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="vendor/owl.carousel/owl.carousel.min.js"></script>
+  <script src="js/theme.js" type="module"></script>
+</body>
+
+</html>
